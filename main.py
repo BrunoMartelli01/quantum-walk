@@ -19,7 +19,7 @@ def setup(screen, ax, circles, ):
 
 
     t = turtle.Turtle()
-    startpos = (0, 320, [0,1])
+    startpos = (0, 220, [0,1])
     draw_circle((startpos[0],startpos[1]), t)
     circles.append([startpos])
 
@@ -71,11 +71,11 @@ def draw_circle(pos, t):
 def start(screen, pos,ax, t):
     balls = []
     print(pos)
-    nballs = 250
+    nballs = 500
     for k in range(nballs):
         if k < nballs-rows:
             startpos = (pos[0][0][0], pos[0][0][1])
-            ball= b.Ball(screen)
+            ball= b.Ball(screen, startpos)
             balls.append(ball)
 
         for i in range(0, len(balls)):
@@ -150,7 +150,7 @@ def update_plot(pos,ax):
 
 if __name__ == '__main__':
     screen = turtle.Screen()
-    fig = plt.figure(figsize=(12, 3), dpi=80)
+    fig = plt.figure(figsize=(12, 5), dpi=80)
     ax = fig.subplots()
     screen.setup(width=1000, height=1000)
     canvas = screen.getcanvas()
