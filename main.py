@@ -3,6 +3,7 @@ import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import numpy as np
+import Turtle as  b
 
 space_lenght = 9
 space_high = 15
@@ -69,60 +70,77 @@ def draw_circle(pos, t):
 
 def start(screen, pos,ax, t):
     balls = []
-    for k in range(100):
-        startpos = (pos[0][0][0], pos[0][0][1])
+    print(pos)
+    nballs = 250
+    for k in range(nballs):
+        if k < nballs-rows:
+            startpos = (pos[0][0][0], pos[0][0][1])
+            ball= b.Ball(screen)
+            balls.append(ball)
 
-        t.penup()
-        random = np.random.rand()
-        # random =0.000000000005
-        print(random)
-        screen.tracer(0)
-        t.setpos(startpos)
-        t.color("Blue")
-        t.begin_fill()
-        t.circle(7)
-        t.end_fill()
-        t.hideturtle()
-        screen.update()
+        for i in range(0, len(balls)):
 
-        where = 0
+                if balls[i].random >= pos[balls[i].depth][balls[i].where][2][0] and balls[i].random < pos[balls[i].depth][balls[i].where][2][1]:
 
-        for i in range(1, len(pos)):
+                    #move(screen, startpos, True, t)
+                    balls[i].isLeft =True
+                    balls[i].temp = (pos[balls[i].depth][balls[i].where][0], pos[balls[i].depth][balls[i].where][1])
+                    balls[i].depth += 1
 
-                if random >= pos[i][where][2][0] and random <= pos[i][where][2][1]:
-
-                    move(screen, startpos, True, t)
-                    startpos = (pos[i][where][0], pos[i][where][1])
 
                 else:
-                    move(screen,  startpos, False, t)
-                    where += 1
-                    startpos = (pos[i][where][0], pos[i][where][1])
+                    #move(screen,  startpos, False, t)
+                    balls[i].where += 1
+                    balls[i].isLeft = False
+                    balls[i].temp = (pos[balls[i].depth][balls[i].where][0], pos[balls[i].depth][balls[i].where][1])
 
-        t.clear()
-        print(where)
-        update_plot(where, ax)
-   # pos[0] = (startpos[0]+ space_lenght, startpos[1] - space_high)
+                    balls[i].depth += 1
 
 
-def move(screen, startpos, isleft, t):
-    moveH = 0
-    moveL = 0
-    frame = 20
 
-    for i in range(frame):
-        t.clear()
-        moveH += space_high / frame
-        moveL += space_lenght / frame
-        if isleft:
-            t.setpos(startpos[0] - moveL, startpos[1] - moveH)
-        else:
-            t.setpos(startpos[0] + moveL, startpos[1] - moveH)
-        t.color("Blue")
-        t.begin_fill()
-        t.circle(7)
-        t.end_fill()
-        screen.update()
+        frame = 5
+
+        for i in range(frame):
+            screen.tracer(0)
+
+            for l in range(0, len(balls)):
+                move(frame, i, balls[l].startpos, balls[l].isLeft, balls[l].t)
+            screen.update()
+
+        j = 0
+        all_balls = True
+        while all_balls:
+            if j == len(balls):
+                all_balls = False
+
+            elif balls[j].depth == rows:
+                update_plot(balls[j].where, ax)
+                balls.pop(j).t.clear()
+            else:
+                balls[j].startpos = balls[j].temp
+                j += 1
+
+
+
+# pos[0] = (startpos[0]+ space_lenght, startpos[1] - space_high)
+
+
+def move(frame,i, startpos, isleft, t):
+
+    moveH = space_high*i /frame
+    moveL = space_lenght*i / frame
+    t.clear()
+    t.penup()
+    if isleft:
+        t.setpos(startpos[0] - moveL, startpos[1] - moveH)
+    else:
+        t.setpos(startpos[0] + moveL, startpos[1] - moveH)
+    t.color("Blue")
+    t.begin_fill()
+    t.circle(7)
+    t.end_fill()
+
+
 
 def update_plot(pos,ax):
     ax.clear()
