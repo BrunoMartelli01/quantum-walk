@@ -12,9 +12,9 @@ circles =  []
 x = range(rows)
 y = np.zeros(rows)
 startpos = (0, 220)
-np.random.seed(0)
-def setup_classic(screen, ax ):
 
+def setup_classic(screen, ax ):
+    np.random.seed(0)
     print('setup')
     print(a)
     circles.clear()
@@ -69,9 +69,11 @@ def setup_classic(screen, ax ):
 
 
 def setup_quantum(screen, ax, ):
+    np.random.seed(0)
     print('setup')
     screen.clearscreen()
     ax.clear()
+
     circles.clear()
     global y
     global rows
@@ -252,8 +254,11 @@ def move(frame,i, p, isleft, t):
 
 def update_plot(pos,ax):
     ax.clear()
+    global y
+    y = np.array(y)
     y[pos] += 1
-    ax.bar(x, y)
+    normalizer = y.sum()
+    ax.bar(x, y/normalizer)
     plot.draw()
 
 if __name__ == '__main__':
@@ -265,6 +270,7 @@ if __name__ == '__main__':
 
     print(pow( b.sum(), 2))
     fig = plt.figure(figsize=(12, 5), dpi=80)
+    fig.ytivks  = range(0, 30)
     ax = fig.subplots()
     screen.setup(width=1000, height=1000)
     canvas = screen.getcanvas()
