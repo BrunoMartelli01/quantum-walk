@@ -12,7 +12,8 @@ circles =  []
 x = range(rows)
 y = np.zeros(rows)
 startpos = (0, 220)
-
+perturbation = 0
+nperturbation = 30
 def setup_classic(screen, ax ):
     np.random.seed(0)
     print('setup')
@@ -74,9 +75,13 @@ def setup_quantum(screen, ax, ):
     screen.clearscreen()
     ax.clear()
 
+
+    tot_rows = 0
     circles.clear()
     global y
     global rows
+
+
     y = np.zeros(rows)
     plot.draw()
     screen.tracer(0)
@@ -94,6 +99,8 @@ def setup_quantum(screen, ax, ):
         pos = []
         lenght = len(circles[i - 1])
         for k in range(lenght):
+
+
             circle = circles[i - 1][k]
             left = circles[i - 1][k - 1][2]
             right = circle[2]
@@ -123,15 +130,32 @@ def setup_quantum(screen, ax, ):
         circles.append(pos)
 
     results = []
+    counter = 0
+    if perturbation != 0:
+        tot_rows = rows*(rows+1)/2
+        tot_rows = int(tot_rows/nperturbation)
+
     for row in circles:
          sum = 0
 
          result_list = []
          for circle in row:
              element = np.array(circle[2])
-             p = pow(element.sum(),2)
-             result_list.append(p)
-             sum += p
+             counter += 1
+
+             if tot_rows != 0 and counter % tot_rows == 0:
+                 random = np.random.randint(0, 4)
+                 element[random] += perturbation
+                 # element[0] += perturbation
+                 # element[1] += perturbation
+                 # element[2] += perturbation
+                 # element[3] += perturbation
+
+
+             a = pow(element[0]-element[2],2)
+             b = pow(element[1]-element[3],2)
+             result_list.append(a+b)
+             sum += a+b
          results.append(result_list/sum)
     circles.clear()
 
@@ -179,7 +203,7 @@ def start(screen,ax):
     balls = []
     pos = circles
     print(pos)
-    nballs = 500
+    nballs = 200
     print(startpos)
     for k in range(nballs):
         if k < nballs-rows:
@@ -250,10 +274,13 @@ def move(frame,i, p, isleft, t):
     t.circle(7)
     t.end_fill()
 
-
+def set_perturbation(x):
+    global perturbation
+    perturbation = int(x)/100
 
 def update_plot(pos,ax):
     ax.clear()
+    ax.set_ylim(0, 0.3)
     global y
     y = np.array(y)
     y[pos] += 1
@@ -270,8 +297,9 @@ if __name__ == '__main__':
 
     print(pow( b.sum(), 2))
     fig = plt.figure(figsize=(12, 5), dpi=80)
-    fig.ytivks  = range(0, 30)
+
     ax = fig.subplots()
+
     screen.setup(width=1000, height=1000)
     canvas = screen.getcanvas()
     master = canvas.master
@@ -280,7 +308,7 @@ if __name__ == '__main__':
 
 
 
-    scale = tk.Scale(master, from_=0, to=100, orient=tk.HORIZONTAL)
+    scale = tk.Scale(master, from_=0, to=100, orient=tk.HORIZONTAL, command=lambda x:set_perturbation(x))
     scale.pack()
 
 
