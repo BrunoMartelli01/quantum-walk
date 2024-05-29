@@ -4,7 +4,7 @@ class Ball:
     t = turtle.Turtle()
     where = 0
     depth = 0
-    startpos = (0, 320)
+    p = (0, 320)
     temp = ()
     isLeft = False
     random = np.random.rand()
@@ -18,7 +18,7 @@ class Ball:
         self.t.circle(7)
         self.t.end_fill()
         self.t.hideturtle()
-        self.startpos = startpos
+        self.p = startpos
         screen.update()
         self.random = np.random.rand()
         self.where = 0
