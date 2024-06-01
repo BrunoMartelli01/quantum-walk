@@ -7,7 +7,7 @@ from Turtle import Ball
 nMove =4
 space_lenght = 9
 space_high = 15
-rows=30
+rows=20
 circles =  []
 x = range(rows)
 y = np.zeros(rows)
@@ -206,6 +206,7 @@ def start(screen,ax):
     nballs = 200
     print(startpos)
     for k in range(nballs):
+
         if k < nballs-rows:
                 ball= Ball(screen, (startpos[0], startpos[1]))
                 balls.append(ball)
@@ -231,7 +232,7 @@ def start(screen,ax):
         # print("---------------------------------------------------")
 
 
-        frame = 5
+        frame = 10
 
         for i in range(frame):
             screen.tracer(0)
