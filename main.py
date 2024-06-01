@@ -7,13 +7,13 @@ from Turtle import Ball
 nMove =4
 space_lenght = 9
 space_high = 15
-rows=30
+rows= 30
 circles =  []
 x = range(rows)
 y = np.zeros(rows)
 startpos = (0, 220)
 perturbation = 0
-delta = 2
+delta = 1.6 # perturbazione da sommare alla probabilità
 nballs = 2000
 def setup_classic(screen, ax ):
     np.random.seed(0)
@@ -141,14 +141,11 @@ def setup_quantum(screen, ax, ):
              r = np.random.rand()
              if r < perturbation:
                  random = np.random.randint(0, 4)
-                 element[random] += delta
+                 element[random] += pow(delta,i) #qua c'è dove viene sommata la perturbazione
                  a = pow(element[0] - element[2], 2)
                  b = pow(element[1] - element[3], 2)
                  print(element[random],counter, a+b)
-                 # element[0] += perturbation
-                 # element[1] += perturbation
-                 # element[2] += perturbation
-                 # element[3] += perturbation
+
 
 
              a = pow(element[0]-element[2],2)
@@ -258,7 +255,7 @@ def start(screen,ax):
                     if(pos[rows-1][i][2][0] < balls[j].random < pos[rows-1][i][2][1]):
                         if(balls[j].where != i):
                             print(balls[j].where, i)
-                        update_plot(i, ax)
+                        update_plot(balls[j].where, ax) # I o where I bari  balls[j].where fai vedere dove cadono effetiavmente le palline
                 h = balls.pop(j)
                 h.t.clear()
 
@@ -293,6 +290,7 @@ def set_perturbation(x):
 def update_plot(pos,ax):
     ax.clear()
     ax.set_ylim(0, 0.3)
+    ax.grid(True)
     global y
     y = np.array(y)
     y[pos] += 1
