@@ -232,7 +232,7 @@ def start(screen,ax):
         # print("---------------------------------------------------")
 
 
-        frame = 10
+        frame = 2
 
         for i in range(frame):
             screen.tracer(0)
