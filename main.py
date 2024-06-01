@@ -13,7 +13,8 @@ x = range(rows)
 y = np.zeros(rows)
 startpos = (0, 220)
 perturbation = 0
-nperturbation = 30
+delta = 2
+nballs = 2000
 def setup_classic(screen, ax ):
     np.random.seed(0)
     print('setup')
@@ -124,16 +125,11 @@ def setup_quantum(screen, ax, ):
         pos.append((circle[0] + space_lenght, circle[1] - space_high, np.roll(circles[i-1][lenght-1][2],-1)))
         draw_circle1((circle[0] + space_lenght, circle[1] - space_high), t)
 
-        # print(pos)
-        # print("-------------------")
-
         circles.append(pos)
 
     results = []
     counter = 0
-    if perturbation != 0:
-        tot_rows = rows*(rows+1)/2
-        tot_rows = int(tot_rows/nperturbation)
+
 
     for row in circles:
          sum = 0
@@ -142,10 +138,13 @@ def setup_quantum(screen, ax, ):
          for circle in row:
              element = np.array(circle[2])
              counter += 1
-
-             if tot_rows != 0 and counter % tot_rows == 0:
+             r = np.random.rand()
+             if r < perturbation:
                  random = np.random.randint(0, 4)
-                 element[random] += perturbation
+                 element[random] += delta
+                 a = pow(element[0] - element[2], 2)
+                 b = pow(element[1] - element[3], 2)
+                 print(element[random],counter, a+b)
                  # element[0] += perturbation
                  # element[1] += perturbation
                  # element[2] += perturbation
@@ -156,6 +155,9 @@ def setup_quantum(screen, ax, ):
              b = pow(element[1]-element[3],2)
              result_list.append(a+b)
              sum += a+b
+
+
+        # print(result_list/sum, "-----------------------")
          results.append(result_list/sum)
     circles.clear()
 
@@ -172,6 +174,10 @@ def setup_quantum(screen, ax, ):
             sum += row[i]
         line.append((0, 0, [sum, 1]))
         circles.append(line)
+
+
+    # for i in range(len(circles)):
+    #     print(circles[i])
     print(circles)
 
     screen.update()
@@ -198,26 +204,26 @@ def draw_circle1(pos, t):
     t.hideturtle()
 
 
-
 def start(screen,ax):
     balls = []
     pos = circles
-    print(pos)
-    nballs = 200
-    print(startpos)
     for k in range(nballs):
         if k < nballs-rows:
                 ball= Ball(screen, (startpos[0], startpos[1]))
                 balls.append(ball)
 
         for i in range(0, len(balls)):
-                # print(pos[balls[i].depth][balls[i].where][2][0], pos[balls[i].depth][balls[i].where][2][1],balls[i].random)
-                if balls[i].random >= pos[balls[i].depth][balls[i].where][2][0] and balls[i].random < pos[balls[i].depth][balls[i].where][2][1]:
+
+                balls[i].percorso.append([[pos[balls[i].depth][balls[i].where][2][0], pos[balls[i].depth][balls[i].where][2][1]],balls[i].random])
+                #print(balls[i].percorso, balls[i].random)
+                #print(pos[balls[i].depth-1][balls[i].where][2][0] , pos[balls[i].depth-1][balls[i].where][2][1],)
+                if (balls[i].random < pos[balls[i].depth][balls[i].where][2][1] and pos[balls[i].depth][balls[i].where][2][1]!=1) or (pos[balls[i].depth][balls[i].where][2][1]==1 and balls[i].random < pos[balls[i].depth][balls[i].where][2][0]):
 
                     #move(screen, startpos, True, t)
                     balls[i].isLeft =True
                     balls[i].temp = (balls[i].p[0]-space_lenght, balls[i].p[1]-space_high)
                     balls[i].depth += 1
+
 
 
                 else:
@@ -227,8 +233,8 @@ def start(screen,ax):
                     balls[i].temp = (balls[i].p[0]+ space_lenght, balls[i].p[1]-space_high)
 
                     balls[i].depth += 1
-
-        # print("---------------------------------------------------")
+                balls[i].percorso.append(balls[i].isLeft)
+        #print("---------------------------------------------------")
 
 
         frame = 5
@@ -248,8 +254,14 @@ def start(screen,ax):
                 all_balls = False
 
             elif balls[j].depth == rows:
-                update_plot(balls[j].where, ax)
-                balls.pop(j).t.clear()
+                for i in range(rows):
+                    if(pos[rows-1][i][2][0] < balls[j].random < pos[rows-1][i][2][1]):
+                        if(balls[j].where != i):
+                            print(balls[j].where, i)
+                        update_plot(i, ax)
+                h = balls.pop(j)
+                h.t.clear()
+
             else:
                 balls[j].p = balls[j].temp
                 j += 1
