@@ -13,10 +13,11 @@ x = range(rows)
 y = np.zeros(rows)
 startpos = (0, 220)
 perturbation = 0
-delta = 0.1  # perturbazione da sommare alla probabilità
+delta =2.0 # perturbazione da sommare alla probabilità
 nballs = 2000
+np.random.seed(0)
 def setup_classic(screen, ax ):
-    np.random.seed(0)
+
     print('setup')
     print(a)
     circles.clear()
@@ -83,18 +84,19 @@ def perturbate(k,pos, t):
         print(r, perturbation)
         random = np.random.randint(0, 4)
         pos[k][2][random] += delta
+        # pos[k][2][random] += delta
         #pos[k][2] [random] = pos[k][2].sum() * delta
         #temp = [pos[k][0], pos[k][1], pos[k][2]]
-        temp =  [pos[k][0], pos[k][1],np.roll(pos[k][2], 1)]
+        #temp =  [pos[k][0], pos[k][1],np.roll(pos[k][2], 1)]
 
 
-        pos[k] = temp
+       # pos[k] = temp
         draw_circle((pos[k][0], pos[k][1]), t)
     return pos
 
 
 def setup_quantum(screen, ax, ):
-    np.random.seed(0)
+
     print('setup')
     screen.clearscreen()
     ax.clear()
@@ -280,7 +282,8 @@ def start(screen,ax):
                 balls[i].percorso.append([[pos[balls[i].depth][balls[i].where][2][0], pos[balls[i].depth][balls[i].where][2][1]],balls[i].random])
                 #print(balls[i].percorso, balls[i].random)
                 #print(pos[balls[i].depth-1][balls[i].where][2][0] , pos[balls[i].depth-1][balls[i].where][2][1],)
-                if (balls[i].random < pos[balls[i].depth][balls[i].where][2][1] and pos[balls[i].depth][balls[i].where][2][1]!=1) or (pos[balls[i].depth][balls[i].where][2][1]==1 and balls[i].random < pos[balls[i].depth][balls[i].where][2][0]):
+                # if (balls[i].random < pos[balls[i].depth][balls[i].where][2][1] and pos[balls[i].depth][balls[i].where][2][1]!=1) or (pos[balls[i].depth][balls[i].where][2][1]==1 and balls[i].random < pos[balls[i].depth][balls[i].where][2][0]):
+                if balls[i].random < pos[balls[i].depth][balls[i].where][2][1]:
 
                     #move(screen, startpos, True, t)
                     balls[i].isLeft =True
