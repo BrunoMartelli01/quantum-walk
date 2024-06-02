@@ -13,7 +13,7 @@ x = range(rows)
 y = np.zeros(rows)
 startpos = (0, 220)
 perturbation = 0
-delta = 1.6 # perturbazione da sommare alla probabilità
+delta = 0.1  # perturbazione da sommare alla probabilità
 nballs = 2000
 def setup_classic(screen, ax ):
     np.random.seed(0)
@@ -61,6 +61,14 @@ def setup_classic(screen, ax ):
         # print("-------------------")
         circles.append(pos)
         pos = circles
+    temp= []
+    s = 0
+    for i in range(len(circles[-1])):
+       # print(circles[-1][i][2][1] - circles[-1][i][2][0])
+        temp.append(circles[-1][i][2][1] - circles[-1][i][2][0])
+
+
+    test(ax, temp)
     screen.update()
 
     # draw_circle((pos[0]+6, pos[1]-10),t)
@@ -68,6 +76,21 @@ def setup_classic(screen, ax ):
 
 
 
+def perturbate(k,pos, t):
+    r = np.random.randint(0, 1000)
+    r = r / 1000
+    if r < perturbation:
+        print(r, perturbation)
+        random = np.random.randint(0, 4)
+        pos[k][2][random] += delta
+        #pos[k][2] [random] = pos[k][2].sum() * delta
+        #temp = [pos[k][0], pos[k][1], pos[k][2]]
+        temp =  [pos[k][0], pos[k][1],np.roll(pos[k][2], 1)]
+
+
+        pos[k] = temp
+        draw_circle((pos[k][0], pos[k][1]), t)
+    return pos
 
 
 def setup_quantum(screen, ax, ):
@@ -107,44 +130,67 @@ def setup_quantum(screen, ax, ):
             right = circle[2]
             # calculate the prob from the father node
 
-
             if k == 0:
                 pos.append((circle[0] - space_lenght, circle[1] - space_high, np.roll(circles[i-1][0][2], 1)))
                 draw_circle1((circle[0] - space_lenght, circle[1] - space_high), t)
+                pos = perturbate( 0, pos,t)
+
             else:
 
                 concl = np.roll(left,-1)
                 concr = np.roll(right,1)
                 conc = concl+ concr
 
+
                 pos.append((circle[0] - space_lenght, circle[1] - space_high, conc))
                 draw_circle1((circle[0] - space_lenght, circle[1] - space_high), t)
+                pos = perturbate(k,pos, t)
+
 
 
 
         pos.append((circle[0] + space_lenght, circle[1] - space_high, np.roll(circles[i-1][lenght-1][2],-1)))
         draw_circle1((circle[0] + space_lenght, circle[1] - space_high), t)
 
+        pos = perturbate(lenght,pos, t)
         circles.append(pos)
+
 
     results = []
     counter = 0
 
-
+    counter_row = 0
+    list_modyfied = []
     for row in circles:
          sum = 0
 
+
          result_list = []
+
+         counter = 0
          for circle in row:
              element = np.array(circle[2])
-             counter += 1
-             r = np.random.rand()
-             if r < perturbation:
-                 random = np.random.randint(0, 4)
-                 element[random] += pow(delta,i) #qua c'è dove viene sommata la perturbazione
-                 a = pow(element[0] - element[2], 2)
-                 b = pow(element[1] - element[3], 2)
-                 print(element[random],counter, a+b)
+
+             # r = np.random.randint(0,1000)
+             # r= r/1000
+             #
+             # if r < perturbation:
+             #     print(r, perturbation)
+             #     draw_circle((circles[counter_row][counter][0], circles[counter_row][counter][1]), t)
+                 # random = np.random.randint(0, 4)
+                 # print(element.sum())
+                 # s = element.sum()
+                 # element[random] += s*delta
+
+                 #element = np.roll(element, 1)
+
+
+
+                 # element[random] += pow(delta,i) #qua c'è dove viene sommata la perturbazione
+                 #
+                 # a = pow(element[0] - element[2], 2)
+                 # b = pow(element[1] - element[3], 2)
+                 # print(element[random],counter, a+b)
 
 
 
@@ -152,10 +198,26 @@ def setup_quantum(screen, ax, ):
              b = pow(element[1]-element[3],2)
              result_list.append(a+b)
              sum += a+b
+             counter += 1
+         counter_row += 1
+
+         # result_list = result_list/sum
+         # print(result_list)
+         # sum = 0
+         # for i in range(len(result_list)):
+         #     r = np.random.rand()
+         #     sum  += result_list[i]
+         #     if r < perturbation:
+         #         result_list[i] += delta
+         #         sum += delta
+         #
 
 
-        # print(result_list/sum, "-----------------------")
+         # print(result_list/sum,"-----------------------")
          results.append(result_list/sum)
+
+
+
     circles.clear()
 
     for row  in results:
@@ -172,14 +234,18 @@ def setup_quantum(screen, ax, ):
         line.append((0, 0, [sum, 1]))
         circles.append(line)
 
-
+    test(ax, results[-1])
     # for i in range(len(circles)):
     #     print(circles[i])
     print(circles)
 
     screen.update()
-
-
+def test(ax, range):
+    ax.clear()
+    ax.set_ylim(0, 0.3)
+    ax.grid(True)
+    ax.bar(x,range)
+    plot.draw()
 def draw_circle(pos, t):
     t.penup()
 
